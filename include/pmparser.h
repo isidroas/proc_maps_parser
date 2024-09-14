@@ -25,7 +25,7 @@ implied warranty.
 #include <linux/limits.h>
 
 //maximum line length in a procmaps file
-#define PROCMAPS_LINE_MAX_LENGTH  (PATH_MAX + 100) 
+#define PROCMAPS_LINE_MAX_LENGTH  (PATH_MAX + 100)  // where is PATH_MAX defined?
 /**
  * procmaps_struct
  * @desc hold all the information about an area in the process's  VM
@@ -35,19 +35,19 @@ typedef struct procmaps_struct{
 	void* addr_end; 	//< end address
 	unsigned long length; //< size of the range
 
-	char perm[5];		//< permissions rwxp
-	short is_r;			//< rewrote of perm with short flags
+	char perm[5];		//< permissions rwxp. stat(3type)? in plural perms like man.
+	short is_r;			//< rewrote of perm with short flags. Debería de ser bool? aunque para el compilador sea lo mismo es más expresivo
 	short is_w;
 	short is_x;
-	short is_p;
+	short is_p; // is S?
 
 	long offset;	//< offset
-	char dev[12];	//< dev major:minor
-	int inode;		//< inode of the file that backs the area
+	char dev[12];	//< dev major:minor . kernel has type for this? Isn't better 2 ints?
+	int inode;		//< inode of the file that backs the area. Kernel has type for this? inode_t
 
-	char pathname[600];		//< the path of the file that backs the area
+	char pathname[600];		//< the path of the file that backs the area. Handy better than free
 	//chained list
-	struct procmaps_struct* next;		//<handler of the chinaed list
+	struct procmaps_struct* next;		//<handler of the chained list
 } procmaps_struct;
 
 /**
