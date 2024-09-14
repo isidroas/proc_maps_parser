@@ -1,22 +1,28 @@
 #include "pmparser.h"
 
 // for easier testing
+int _pmparser_parse_line(char * line, procmaps_struct * entry){
+
+  // TODO: exclude endofline
+  int ret = sscanf(line, "%p-%p %s %ld %s %d %s", &(entry->addr_start), &(entry->addr_end), entry->perm, &(entry->offset), entry->dev, &(entry->inode), entry->pathname);
+  if (ret<7){
+    perror("failed scanf");
+    return -1;
+  }
+  return 0;
+}
+
+// for easier testing
 procmaps_iterator* _pmparser_parse_stream(FILE * stream){
   
   char line[PROCMAPS_LINE_MAX_LENGTH];
-
 
   while (fgets(line, sizeof(line), stream) !=NULL){
 
     procmaps_struct * entry = malloc(sizeof(procmaps_struct));
 
-    // TODO: exclude endofline
-    int ret = sscanf(line, "%p-%p %s %ld %s %d %s", &(entry->addr_start), &(entry->addr_end), entry->perm, &(entry->offset), entry->dev, &(entry->inode), entry->pathname);
-    if (ret<7){
-      perror("failed scanf");
-      return NULL;
-    }
   }
+  return NULL;
 
 }
 
