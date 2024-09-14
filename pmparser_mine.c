@@ -26,7 +26,7 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream) {
   while (fgets(line, sizeof(line), stream) != NULL) {
 
     // TODO: handle errors
-    procmaps_struct *entry = malloc(sizeof(procmaps_struct));
+    entry = malloc(sizeof(procmaps_struct));
     assert(entry != NULL);
     _pmparser_parse_line(line, entry);
     if (prev != NULL) // unless first iteration
@@ -76,7 +76,7 @@ void pmparser_free(procmaps_iterator *p_procmaps_it) {
   procmaps_struct *current = p_procmaps_it->head;
 
   while (current != NULL) {
-    procmaps_struct *next = current->next;
+    next = current->next;
     free(current);
     current = next;
   };
