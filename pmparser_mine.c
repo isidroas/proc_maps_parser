@@ -9,6 +9,7 @@ int _pmparser_parse_line(char *line, procmaps_struct *entry) {
                    entry->dev, &(entry->inode), entry->pathname);
   if (ret < 7) {
     perror("failed scanf");
+    // TODO: this print Success.
     return -1;
   }
   return 0;
@@ -26,13 +27,22 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream) {
   while (fgets(line, sizeof(line), stream) != NULL) {
 
     // TODO: handle errors
+
     entry = malloc(sizeof(procmaps_struct));
+    if (_pmparser_parse_line(line, entry)) {
+      // this happens with the trailing newline of the file. TODO: search that
+      // behaviour in docs o SO.
+      free(entry);
+      continue;
+    }
     assert(entry != NULL);
-    _pmparser_parse_line(line, entry);
     if (prev != NULL) // unless first iteration
       prev->next = entry;
-    if (it->head == NULL) // first iteration
+    if (it->head == NULL) {
+      // first iteration
       it->head = entry;
+      it->current = entry;
+    }
     prev = entry;
   }
   entry->next = NULL;
@@ -62,11 +72,9 @@ procmaps_struct *pmparser_next(procmaps_iterator *p_procmaps_it) {
   // TODO: mirar implementación de getifaddr o alguna otra API que hace uso de
   // linked lists.
   procmaps_struct *res;
-  if (p_procmaps_it->current == NULL)
-    res = p_procmaps_it->head;
-  else
-    res = p_procmaps_it->current;
-  p_procmaps_it->current = res->next;
+  res = p_procmaps_it->current;
+  if (res != NULL)
+    p_procmaps_it->current = res->next;
   return res;
 }
 

@@ -55,7 +55,9 @@ typedef struct procmaps_struct{
  * @desc holds iterating information
  */
 typedef struct procmaps_iterator{
+  // make head const?
 	procmaps_struct* head;
+  // it is the next obj to be returned next(). It should be equal to head in the first iteration. When no more elemets remain it is NULL.
 	procmaps_struct* current;
 } procmaps_iterator;
 /**

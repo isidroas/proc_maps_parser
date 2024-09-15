@@ -20,6 +20,23 @@ void test_parse_line(void) {
   assert(strcmp(entry.pathname, "/usr/bin/dbus-daemon") == 0);
 }
 
+void test_next(void) {
+  // not sure if include in pr.
+  procmaps_struct entry1, entry2, entry3;
+  entry1.addr_start = (void *)1;
+  entry2.addr_start = (void *)2;
+  entry3.addr_start = (void *)3;
+  entry1.next = &entry2;
+  entry2.next = &entry3;
+  entry3.next = NULL;
+  /* procmaps_iterator it = {.head=&entry1, .current=NULL}; */
+  procmaps_iterator it = {.head = &entry1, .current = &entry1};
+  assert(pmparser_next(&it) == &entry1);
+  assert(pmparser_next(&it) == &entry2);
+  assert(pmparser_next(&it) == &entry3);
+  assert(pmparser_next(&it) == NULL);
+}
+
 void test_parse_stream(void) {
 
   char contents[] =
@@ -44,5 +61,6 @@ void test_process(void) {
 
 int main(void) {
   test_parse_line();
+  test_next();
   test_parse_stream();
 }
