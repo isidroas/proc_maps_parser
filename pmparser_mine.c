@@ -7,10 +7,13 @@ int _pmparser_parse_line(char *line, procmaps_struct *entry) {
   int ret = sscanf(line, "%p-%p %s %ld %s %d %s", &(entry->addr_start),
                    &(entry->addr_end), entry->perm, &(entry->offset),
                    entry->dev, &(entry->inode), entry->pathname);
-  if (ret < 7) {
+  if (ret < -1) {
     perror("failed scanf");
-    // TODO: this print Success.
     return -1;
+  }
+  if (ret != 7) {
+    /* printf("Some arguments not processed\n"); */
+    return -2;
   }
   return 0;
 }
