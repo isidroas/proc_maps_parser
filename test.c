@@ -55,12 +55,24 @@ void test_parse_stream(void) {
   pmparser_free(it);
 }
 
+// TODO: Innecesario, ya lo hace el example que lo puede ejecutar la ci
 void test_process(void) {
   // TODO: read maps of this process and supply check that is not null.
+  procmaps_iterator *it = pmparser_parse(-1);
+  assert(it!=NULL);
+  int size;
+  procmaps_struct *map=NULL;
+  map=pmparser_next(it);
+  for (size=0;map!=NULL;map=pmparser_next(it)){
+    pmparser_print(map,1);
+    size++;
+  }
+  assert(size>1);
 }
 
 int main(void) {
   test_parse_line();
   test_next();
   test_parse_stream();
+  test_process();
 }

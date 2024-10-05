@@ -25,6 +25,7 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream) {
   char line[PROCMAPS_LINE_MAX_LENGTH];
 
   procmaps_iterator *it = malloc(sizeof(procmaps_iterator));
+  memset(it, 0, sizeof(*it));
   procmaps_struct *entry = NULL, *prev = NULL;
 
   while (fgets(line, sizeof(line), stream) != NULL) {
