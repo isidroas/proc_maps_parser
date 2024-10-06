@@ -3,16 +3,16 @@
 // for easier testing
 int _pmparser_parse_line(char *line, procmaps_struct *entry) {
 
-  // TODO: exclude endofline
-  int ret = sscanf(line, "%p-%p %s %ld %s %d %s", &(entry->addr_start),
+  // endofline is exclude autopatically since %s stops in whitespace
+  // TODO: obtain max string by sizeof(entry->..)
+  int ret = sscanf(line, "%p-%p %4s %ld %11s %d %599s", &(entry->addr_start),
                    &(entry->addr_end), entry->perm, &(entry->offset),
                    entry->dev, &(entry->inode), entry->pathname);
   if (ret < -1) {
     perror("failed scanf");
     return -1;
   }
-  if (ret != 7) {
-    /* printf("Some arguments not processed\n"); */
+  if (ret < 6 || ret > 7) { // the last argument (pathname) is optional
     return -2;
   }
   return 0;
@@ -33,13 +33,11 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream) {
     // TODO: handle errors
 
     entry = malloc(sizeof(procmaps_struct));
-    if (_pmparser_parse_line(line, entry)) {
-      // this happens with the trailing newline of the file. TODO: search that
-      // behaviour in docs o SO.
-      free(entry);
-      continue;
-    }
     assert(entry != NULL);
+    if (_pmparser_parse_line(line, entry)) {
+      abort();
+      // TODO: free all struct and return null
+    }
     if (prev != NULL) // unless first iteration
       prev->next = entry;
     if (it->head == NULL) {
