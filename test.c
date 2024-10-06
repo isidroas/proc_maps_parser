@@ -55,10 +55,13 @@ void test_parse_stream(void) {
   
   FILE *stream = fmemopen(contents, sizeof(contents)-1 /* remove null byte*/, "r");
   procmaps_iterator *it = _pmparser_parse_stream(stream);
+  assert(it);
   procmaps_struct *entry = NULL;
   entry = pmparser_next(it);
+  assert(entry);
   assert(entry->addr_start == (void *)0x00400000);
   entry = pmparser_next(it);
+  assert(entry);
   assert(entry->addr_start == (void *)0x00651000);
   entry = pmparser_next(it);
   assert(entry == NULL);

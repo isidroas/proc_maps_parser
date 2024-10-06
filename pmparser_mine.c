@@ -14,6 +14,7 @@ int _pmparser_parse_line(char *line, procmaps_struct *entry) {
   }
   else if(ret == 6){
     // missing last argument (pathname) is optional
+    // however, aqui se llega si falta cualquiera, no necesariamente el último. TODO: es posible saberlo?
     entry->pathname[0]='\0';
   }
   else if(ret !=7){
@@ -38,11 +39,14 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream) {
     // TODO: handle errors
 
     entry = malloc(sizeof(procmaps_struct));
+    // TODO: memset(0) ?
     assert(entry != NULL);
     if (_pmparser_parse_line(line, entry)) {
-      abort();
-      // TODO: free all struct and return null
+      free(entry);
+      pmparser_free(it);
+      return NULL;
     }
+
     if (prev != NULL) // unless first iteration
       prev->next = entry;
     if (it->head == NULL) {
@@ -50,9 +54,10 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream) {
       it->head = entry;
       it->current = entry;
     }
+
     prev = entry;
+    entry->next = NULL;
   }
-  entry->next = NULL;
   return it;
 }
 

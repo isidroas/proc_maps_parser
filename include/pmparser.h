@@ -47,13 +47,14 @@ typedef struct procmaps_struct{
 
 	char pathname[600];		//< the path of the file that backs the area. Handy better than free
 	//chained list
-	struct procmaps_struct* next;		//<handler of the chained list. TODO: this is not used
+	struct procmaps_struct* next;		//<handler of the chained list.
 } procmaps_struct;
 
 /**
  * procmaps_iterator
  * @desc holds iterating information
  */
+// TODO: unnecesary since the ~next~ field in procmaps_struct ?
 typedef struct procmaps_iterator{
   // make head const?
 	procmaps_struct* head;
