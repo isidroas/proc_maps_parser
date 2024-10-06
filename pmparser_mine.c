@@ -12,7 +12,12 @@ int _pmparser_parse_line(char *line, procmaps_struct *entry) {
     perror("failed scanf");
     return -1;
   }
-  if (ret < 6 || ret > 7) { // the last argument (pathname) is optional
+  else if(ret == 6){
+    // missing last argument (pathname) is optional
+    entry->pathname[0]='\0';
+  }
+  else if(ret !=7){
+    // missing arguments
     return -2;
   }
   return 0;
