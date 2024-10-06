@@ -95,3 +95,7 @@ void pmparser_free(procmaps_iterator *p_procmaps_it) {
 
   free(p_procmaps_it);
 }
+
+void pmparser_print(procmaps_struct *map, int order){
+  printf("start: %p\n", map->addr_start);
+}
