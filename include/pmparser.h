@@ -47,7 +47,7 @@ typedef struct procmaps_struct{
 
 	char pathname[600];		//< the path of the file that backs the area. Handy better than free
 	//chained list
-	struct procmaps_struct* next;		//<handler of the chained list
+	struct procmaps_struct* next;		//<handler of the chained list. TODO: this is not used
 } procmaps_struct;
 
 /**
@@ -90,7 +90,7 @@ void _pmparser_split_line(char*buf,char*addr1,char*addr2,char*perm, char* offset
 /**
  * pmparser_print
  * @param map the head of the list
- * @order the order of the area to print, -1 to print everything
+ * @order the order of the area to print, -1 to print everything. 0 is the same. TODO: I don't understand even seeing the implementation
  */
 void pmparser_print(procmaps_struct* map,int order);
 
