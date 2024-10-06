@@ -7,10 +7,10 @@ procmaps_iterator *_pmparser_parse_stream(FILE *stream);
 void test_parse_line(void) {
   // from man pages example:
   char line[] =
-      "00400000-00452000 r-xp 00000000 08:02 173521      /usr/bin/dbus-daemon";
+      "00400000-00452000 r-xp 00000000 08:02 173521      /usr/bin/dbus-daemon\n";
   procmaps_struct entry;
 
-  _pmparser_parse_line(line, &entry);
+  assert(_pmparser_parse_line(line, &entry)==0);
   assert(entry.addr_start == (void *)0x00400000);
   assert(entry.addr_end == (void *)0x00452000);
   assert(strcmp(entry.perm, "r-xp") == 0);
@@ -18,6 +18,15 @@ void test_parse_line(void) {
   assert(strcmp(entry.dev, "08:02") == 0);
   assert(entry.inode == 173521);
   assert(strcmp(entry.pathname, "/usr/bin/dbus-daemon") == 0);
+}
+
+void test_parse_line_without_pathname(void) {
+  char line[] =
+    "35b1a21000-35b1a22000 rw-p 00000000 00:00 0\n";
+  procmaps_struct entry;
+
+  assert(_pmparser_parse_line(line, &entry)==0);
+  assert(strlen(entry.pathname) == 0);
 }
 
 void test_next(void) {
@@ -43,7 +52,8 @@ void test_parse_stream(void) {
       "00400000-00452000 r-xp 00000000 08:02 173521      /usr/bin/dbus-daemon\n"
       "00651000-00652000 r--p 00051000 08:02 173521      "
       "/usr/bin/dbus-daemon\n";
-  FILE *stream = fmemopen(contents, sizeof(contents), "r");
+  
+  FILE *stream = fmemopen(contents, sizeof(contents)-1 /* remove null byte*/, "r");
   procmaps_iterator *it = _pmparser_parse_stream(stream);
   procmaps_struct *entry = NULL;
   entry = pmparser_next(it);
@@ -72,6 +82,7 @@ void test_process(void) {
 
 int main(void) {
   test_parse_line();
+  test_parse_line_without_pathname();
   test_next();
   test_parse_stream();
   test_process();
